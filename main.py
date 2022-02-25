@@ -26,6 +26,8 @@ tile_width = tile_height = 50
 FPS = 50
 clock = pygame.time.Clock()
 
+map_file = input('Введите имя файла с картой уровня: ')
+
 
 def load_level(filename):
     filename = "data/" + filename
@@ -120,7 +122,7 @@ if __name__ == '__main__':
     pygame.display.set_caption('Перемещение героя')
     running = True
 
-    level_map = load_level('map.txt')
+    level_map = load_level(map_file)
     player, level_x, level_y = generate_level(level_map)
     start_screen()
     while running:
