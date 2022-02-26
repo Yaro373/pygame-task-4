@@ -95,24 +95,24 @@ class Player(pygame.sprite.Sprite):
     def update(self, event, level_map):
         super().update(event)
 
+        h, w = len(level_map), len(level_map[0])
+
         if event is not None:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    if self.pos_y != 0 and level_map[self.pos_y - 1][self.pos_x] != '#':
+                    if level_map[(self.pos_y - 1) % h][self.pos_x % w] != '#':
                         self.rect.y -= tile_height
                         self.pos_y -= 1
                 elif event.key == pygame.K_d:
-                    if self.pos_x != (len(level_map[0]) - 1) \
-                            and level_map[self.pos_y][self.pos_x + 1] != '#':
+                    if level_map[self.pos_y % h][(self.pos_x + 1) % w] != '#':
                         self.rect.x += tile_width
                         self.pos_x += 1
                 elif event.key == pygame.K_s:
-                    if self.pos_y != (len(level_map) - 1) \
-                            and level_map[self.pos_y + 1][self.pos_x] != '#':
+                    if level_map[(self.pos_y + 1) % h][self.pos_x % w] != '#':
                         self.rect.y += tile_height
                         self.pos_y += 1
                 elif event.key == pygame.K_a:
-                    if self.pos_x != 0 and level_map[self.pos_y][self.pos_x - 1] != '#':
+                    if level_map[self.pos_y % h][(self.pos_x - 1) % w] != '#':
                         self.rect.x -= tile_width
                         self.pos_x -= 1
 
@@ -125,6 +125,8 @@ class Camera:
     def apply(self, obj):
         obj.rect.x += self.dx
         obj.rect.y += self.dy
+        obj.rect.x = obj.rect.x % width
+        obj.rect.y = obj.rect.y % height
 
     def update(self, target):
         self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
