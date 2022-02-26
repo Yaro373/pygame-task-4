@@ -98,21 +98,37 @@ class Player(pygame.sprite.Sprite):
         if event is not None:
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_w:
-                    if level_map[self.pos_x][self.pos_y - 1] != '#':
+                    if self.pos_y != 0 and level_map[self.pos_y - 1][self.pos_x] != '#':
                         self.rect.y -= tile_height
                         self.pos_y -= 1
                 elif event.key == pygame.K_d:
-                    if level_map[self.pos_x + 1][self.pos_y] != '#':
+                    if self.pos_x != (len(level_map[0]) - 1) \
+                            and level_map[self.pos_y][self.pos_x + 1] != '#':
                         self.rect.x += tile_width
                         self.pos_x += 1
                 elif event.key == pygame.K_s:
-                    if level_map[self.pos_x][self.pos_y + 1] != '#':
+                    if self.pos_y != (len(level_map) - 1) \
+                            and level_map[self.pos_y + 1][self.pos_x] != '#':
                         self.rect.y += tile_height
                         self.pos_y += 1
                 elif event.key == pygame.K_a:
-                    if level_map[self.pos_x - 1][self.pos_y] != '#':
+                    if self.pos_x != 0 and level_map[self.pos_y][self.pos_x - 1] != '#':
                         self.rect.x -= tile_width
                         self.pos_x -= 1
+
+
+class Camera:
+    def __init__(self):
+        self.dx = 0
+        self.dy = 0
+
+    def apply(self, obj):
+        obj.rect.x += self.dx
+        obj.rect.y += self.dy
+
+    def update(self, target):
+        self.dx = -(target.rect.x + target.rect.w // 2 - width // 2)
+        self.dy = -(target.rect.y + target.rect.h // 2 - height // 2)
 
 
 if __name__ == '__main__':
@@ -124,6 +140,7 @@ if __name__ == '__main__':
 
     level_map = load_level(map_file)
     player, level_x, level_y = generate_level(level_map)
+    camera = Camera()
     start_screen()
     while running:
         for event in pygame.event.get():
@@ -132,6 +149,9 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.MOUSEBUTTONDOWN:
                 pass
+        camera.update(player)
+        for sprite in all_sprites:
+            camera.apply(sprite)
         screen.fill((0, 0, 0))
         tiles_group.draw(screen)
         player_group.draw(screen)
